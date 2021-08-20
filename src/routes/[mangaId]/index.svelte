@@ -39,6 +39,7 @@
 
 	const loadStuff = async () => {
 		const res = await axios.get(`mv-api/manga/${e(source)}/${e(mangaId)}/${e(link)}`);
+		console.log(res);
 		store.update((currentData) => {
 			return { [mangaId]: res.data.result.chapters.reverse(), ...currentData };
 		});

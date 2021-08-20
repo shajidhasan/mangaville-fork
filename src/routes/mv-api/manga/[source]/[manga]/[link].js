@@ -43,6 +43,6 @@ export async function get({ params }) {
   let resData = parseHtml(source, manga, html);
 
   return {
-    body: { result: resData, code: response.status, text: response.statusText }
+    body: { result: resData, code: response.status, text: response.statusText, html }
   }
 }
