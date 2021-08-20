@@ -48,7 +48,7 @@
 			chapterName = chapterInfo[chapterId - 1].chapterName;
 			chapterLink = chapterInfo[chapterId - 1].chapterLink;
 			id = chapterInfo[chapterId - 1].chapterId;
-			const newLink = chapterLink.replace(/\//g, ',');
+			const newLink = chapterLink.replace(/\//g, ',').replace(/-/g, '@');
 			console.log('Loading chapters...');
 			console.log(`../mv-api/chapter/${source}/${mangaId}/${newLink}`);
 			try {
@@ -60,7 +60,7 @@
 			}
 		} else {
 			console.log('Manga ID does not exist in store.');
-			const newLink = link.replace(/\//g, ',');
+			const newLink = link.replace(/\//g, ',').replace(/-/g, 'w');
 			let res = await axios.get(`../mv-api/manga/${source}/${mangaId}/${newLink}`);
 			store.update((currentData) => {
 				return { [mangaId]: res.data.chapters.reverse(), ...currentData };
@@ -69,7 +69,7 @@
 			chapterName = chapterInfo[chapterId - 1].chapterName;
 			chapterLink = chapterInfo[chapterId - 1].chapterLink;
 			id = chapterInfo[chapterId - 1].chapterId;
-			const newChapterLink = chapterLink.replace(/\//g, ',');
+			const newChapterLink = chapterLink.replace(/\//g, ',').replace(/-/g, '@');
 			res = await axios.get(`../mv-api/chapter/${source}/${mangaId}/${newChapterLink}`);
 			chapter = res.data;
 		}

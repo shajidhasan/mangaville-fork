@@ -21,7 +21,7 @@
 	let chapter = [];
 
 	onMount(() => {
-		const newLink = link.replace(/\//g, ',');
+		const newLink = link.replace(/\//g, ',').replace(/-/g, '@');
 		// mv-api/idkmanga/DrStone/https:,,dr-stone-online.com
 		axios
 			.get(`mv-api/manga/${source}/${mangaId}/${newLink}`)

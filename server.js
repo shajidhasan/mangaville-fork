@@ -28,7 +28,7 @@ mv.use(express.json());
 mv.get('/manga/:source/:manga/:link', (req, res) => {
 	console.log(`hello from the other side -> ${new Date()} `);
 	const { link, source } = req.params;
-	const newLink = link.replace(/,/g, '/');
+	const newLink = link.replace(/,/g, '/').replace(/@/g, '-');
 	let resData = {
 		title: '',
 		chapters: []
@@ -128,7 +128,7 @@ mv.get('/manga/:source/:manga/:link', (req, res) => {
 
 mv.get('/chapter/:source/:manga/:link', (req, res) => {
 	const { manga, link, source } = req.params;
-	const chapterLink = link.replace(/,/g, '/');
+	const chapterLink = link.replace(/,/g, '/').replace(/@/g, '-');
 	let resData = {
 		title: '',
 		images: []

@@ -3,7 +3,7 @@ import cheerio from "cheerio";
 
 export async function get({ params }) {
   let { manga, link, source } = params;
-  link = link.replace(/,/g, '/');
+  link = link.replace(/,/g, '/').replace(/@/g, '-');
   let resData = {
     title: '',
     images: []
