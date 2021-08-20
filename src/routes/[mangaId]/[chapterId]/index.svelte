@@ -4,8 +4,11 @@
 	import { store } from '../../../database/db';
 	import { onMount, onDestroy } from 'svelte';
 
+	const e = encodeURIComponent,
+		d = decodeURIComponent;
+
 	const { mangaId, chapterId } = $page.params;
-	const manga = mangaId.replace(/-/g, ' ');
+	const manga = d(mangaId);
 
 	const { title, cover, link, source } = $store.mangas.filter((el) => el.title === manga)[0];
 
@@ -43,88 +46,28 @@
 
 	const loadStuff = async () => {
 		if ($store[mangaId]) {
-			console.log('Manga ID exists in store.');
 			chapterInfo = [...$store[mangaId]];
 			chapterName = chapterInfo[chapterId - 1].chapterName;
 			chapterLink = chapterInfo[chapterId - 1].chapterLink;
 			id = chapterInfo[chapterId - 1].chapterId;
-			const newLink = chapterLink.replace(/\//g, ',').replace(/-/g, '@');
-			console.log('Loading chapters...');
-			console.log(`../mv-api/chapter/${source}/${mangaId}/${newLink}`);
-			try {
-				const res = await axios.get(`../mv-api/chapter/${source}/${mangaId}/${newLink}`);
-				chapter = res.data;
-				console.log(chapter);
-			} catch (error) {
-				console.log('Ooopss! Error occurred.');
-			}
+			console.log(`../mv-api/chapter/${e(source)}/${e(mangaId)}/${e(chapterLink)}`);
+			let res = await axios.get(`../mv-api/chapter/${e(source)}/${e(mangaId)}/${e(chapterLink)}`);
+			console.log(res.data);
+			chapter = res.data.result;
 		} else {
-			console.log('Manga ID does not exist in store.');
-			const newLink = link.replace(/\//g, ',').replace(/-/g, 'w');
-			let res = await axios.get(`../mv-api/manga/${source}/${mangaId}/${newLink}`);
+			let res = await axios.get(`../mv-api/manga/${e(source)}/${e(mangaId)}/${e(link)}`);
 			store.update((currentData) => {
-				return { [mangaId]: res.data.chapters.reverse(), ...currentData };
+				return { [mangaId]: res.data.result.chapters.reverse(), ...currentData };
 			});
 			chapterInfo = [...$store[mangaId]];
 			chapterName = chapterInfo[chapterId - 1].chapterName;
 			chapterLink = chapterInfo[chapterId - 1].chapterLink;
 			id = chapterInfo[chapterId - 1].chapterId;
-			const newChapterLink = chapterLink.replace(/\//g, ',').replace(/-/g, '@');
-			res = await axios.get(`../mv-api/chapter/${source}/${mangaId}/${newChapterLink}`);
-			chapter = res.data;
+			res = await axios.get(`../mv-api/chapter/${e(source)}/${e(mangaId)}/${e(chapterLink)}`);
+			console.log(res.data);
+			chapter = res.data.result;
 		}
 	};
-
-	// if ($store[mangaId] !== undefined) {
-	// 	chapterInfo = [...$store[mangaId]];
-	// 	chapterName = chapterInfo[chapterId - 1].chapterName;
-	// 	chapterLink = chapterInfo[chapterId - 1].chapterLink;
-	// 	id = chapterInfo[chapterId - 1].chapterId;
-
-	// 	const newLink = chapterLink.replace(/\//g, ',');
-	// 	axios
-	// 		.get(`../mv-api/chapter/${source}/${mangaId}/${newLink}`)
-	// 		.then((res) => {
-	// 			console.log('call 1 done!');
-	// 			chapter = res.data;
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log('call 1 error!');
-	// 			// console.log(err);
-	// 		});
-	// } else {
-	// 	const newLink = link.replace(/\//g, ',');
-	// 	console.log('not found in store.');
-	// 	axios
-	// 		.get(`../mv-api/manga/${source}/${mangaId}/${newLink}`)
-	// 		.then((res) => {
-	// 			console.log('call 2 done!');
-	// 			store.update((currentData) => {
-	// 				return { [mangaId]: res.data.chapters.reverse(), ...currentData };
-	// 			});
-	// 			chapterInfo = [...$store[mangaId]];
-	// 			chapterName = chapterInfo[chapterId - 1].chapterName;
-	// 			chapterLink = chapterInfo[chapterId - 1].chapterLink;
-	// 			id = chapterInfo[chapterId - 1].chapterId;
-
-	// 			const newChapterLink = chapterLink.replace(/\//g, ',');
-	// 			axios
-	// 				.get(`../mv-api/chapter/${source}/${mangaId}/${newChapterLink}`)
-	// 				.then((res) => {
-	// 					console.log('call 3 done!');
-	// 					chapter = res.data;
-	// 				})
-	// 				.catch((err) => {
-	// 					console.log('call 3 error!');
-	// 					console.log(err);
-	// 				});
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log('call 2 error!');
-	// 			// console.log(err);
-	// 		});
-	// }
-
 	let chapter = { title: '', images: [] };
 </script>
 

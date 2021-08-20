@@ -23,7 +23,7 @@
 	</h2>
 	<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-10 items-stretch ">
 		{#each $store.mangas as manga}
-			<a href="/{manga.title.replace(/ /g, '-')}"
+			<a href="/{encodeURIComponent(manga.title)}"
 				><div
 					class="grid grid-cols-2 hover:-translate-y-2 transition duration-300 ease-in-out hover:opacity-60"
 				>
@@ -40,7 +40,7 @@
 						<h3 class="text-xl font-medium truncate">{manga.title}</h3>
 						<p class="font-medium text-base">{manga.duration}</p>
 						<p class="truncate text-sm">{manga.genre}</p>
-						<a href="/{manga.title.replace(/ /g, '-')}" class="uppercase text-primary"
+						<a href="/{encodeURIComponent(manga.title)}" class="uppercase text-primary"
 							>Read <span class="text-xl">›</span></a
 						>
 						<br />

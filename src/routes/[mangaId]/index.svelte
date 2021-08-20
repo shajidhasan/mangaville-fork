@@ -1,17 +1,14 @@
-<!-- <script context="module">
-	export const load = async ({fetch}) => {
-
-	}
-</script> -->
-
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { store } from '../../database/db';
 	import axios from 'axios';
 
+	const e = encodeURIComponent,
+		d = decodeURIComponent;
+
 	const { mangaId } = $page.params;
-	const manga = mangaId.replace(/-/g, ' ');
+	const manga = d(mangaId);
 
 	const { title, genre, duration, description, cover, link, source } = $store.mangas.filter(
 		(el) => el.title === manga
@@ -21,22 +18,7 @@
 	let chapter = [];
 
 	onMount(() => {
-		const newLink = link.replace(/\//g, ',').replace(/-/g, '@');
-		// mv-api/idkmanga/DrStone/https:,,dr-stone-online.com
-		axios
-			.get(`mv-api/manga/${source}/${mangaId}/${newLink}`)
-			.then((res) => {
-				store.update((currentData) => {
-					return { [mangaId]: res.data.chapters.reverse(), ...currentData };
-				});
-			})
-			.then(() => {
-				const arr = [...$store[mangaId]];
-				chapter = slicer(arr);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		loadStuff();
 	});
 
 	function slicer(arr = []) {
@@ -54,6 +36,15 @@
 		}
 		return newArr;
 	}
+
+	const loadStuff = async () => {
+		const res = await axios.get(`mv-api/manga/${e(source)}/${e(mangaId)}/${e(link)}`);
+		store.update((currentData) => {
+			return { [mangaId]: res.data.result.chapters.reverse(), ...currentData };
+		});
+		const arr = [...$store[mangaId]];
+		chapter = slicer(arr);
+	};
 </script>
 
 <svelte:head>

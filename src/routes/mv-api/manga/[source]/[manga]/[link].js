@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 import cheerio from "cheerio";
 
-const parseHtml = (source, html) => {
-  let resData = {
+const parseHtml = (source, manga, html) => {
+  const resData = {
     title: '',
     chapters: []
   };
@@ -37,16 +37,12 @@ export async function get({ params }) {
   const d = decodeURIComponent;
   let { source, manga, link } = params;
   source = d(source); manga = d(manga); link = d(link);
-  let html = "nothing here";
   const response = await fetch(link);
-  try {
-    const html = await response.text();
-    return {
-      body: { result: html, code: response.status, text: response.statusText }
-    }
-  } catch (error) {
-    return {
-      body: { result: html, error: true, code: response.status, text: response.statusText }
-    }
+  const html = await response.text();
+
+  let resData = parseHtml(source, manga, html);
+
+  return {
+    body: { result: resData, code: response.status, text: response.statusText }
   }
 }
