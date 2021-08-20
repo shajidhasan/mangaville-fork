@@ -34,13 +34,19 @@ const parseHtml = (source, html) => {
 }
 
 export async function get({ params }) {
+  const d = decodeURIComponent;
   let { source, manga, link } = params;
-
-  link = link.replace(/,/g, '/').replace(/@/g, '-');
+  source = d(source); manga = d(manga); link = d(link);
+  let html = "nothing here";
   const response = await fetch(link);
-  const html = await response.text();
-  const resData = parseHtml(source, html);
-  return {
-    body: resData
+  try {
+    const html = await response.text();
+    return {
+      body: { result: html, code: response.status, text: response.statusText }
+    }
+  } catch (error) {
+    return {
+      body: { result: html, error: true, code: response.status, text: response.statusText }
+    }
   }
 }
